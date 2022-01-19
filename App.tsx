@@ -17,83 +17,83 @@ import {
 const keyboard = [
   {
     theme: colors.buttonpurple,
-    text: 'C',
-    desc: 'clear',
+    value: 'C',
+    type: 'clear',
   },
   {
     theme: colors.buttonpurple,
-    text: '+/-',
-    desc: 'posneg',
+    value: '+/-',
+    type: 'posneg',
   },
   {
     theme: colors.buttonpurple,
-    text: '%',
-    desc: 'percentage',
+    value: '%',
+    type: 'percentage',
   },
   {
     theme: colors.buttonorange,
-    text: '/',
-    desc: 'operator',
+    value: '/',
+    type: 'operator',
   },
   {
     theme: colors.buttondark,
-    text: '7',
-    desc: 'number',
+    value: '7',
+    type: 'number',
   },
   {
     theme: colors.buttondark,
-    text: '8',
-    desc: 'number',
+    value: '8',
+    type: 'number',
   },
   {
     theme: colors.buttondark,
-    text: '9',
-    desc: 'number',
+    value: '9',
+    type: 'number',
   },
   {
     theme: colors.buttonorange,
-    text: 'x',
-    desc: 'operator',
+    value: 'x',
+    type: 'operator',
   },
   {
     theme: colors.buttondark,
-    text: '4',
-    desc: 'number',
+    value: '4',
+    type: 'number',
   },
   {
     theme: colors.buttondark,
-    text: '5',
-    desc: 'number',
+    value: '5',
+    type: 'number',
   },
   {
     theme: colors.buttondark,
-    text: '6',
-    desc: 'number',
+    value: '6',
+    type: 'number',
   },
   {
     theme: colors.buttonorange,
-    text: '-',
-    desc: 'operator',
+    value: '-',
+    type: 'operator',
   },
   {
     theme: colors.buttondark,
-    text: '1',
-    desc: 'number',
+    value: '1',
+    type: 'number',
   },
   {
     theme: colors.buttondark,
-    text: '2',
-    desc: 'number',
+    value: '2',
+    type: 'number',
   },
   {
     theme: colors.buttondark,
-    text: '3',
-    desc: 'number',
+    value: '3',
+    type: 'number',
   },
   {
     theme: colors.buttonorange,
-    text: '+',
-    desc: 'operator',
+    value: '+',
+    type: 'operator',
   },
 ];
 
@@ -106,7 +106,7 @@ export default function App() {
 }
 
 function Home() {
-  const {setCurrentValue} = useCalculatorContext();
+  const {calculate} = useCalculatorContext();
   return (
     <SafeAreaView
       style={{
@@ -133,25 +133,34 @@ function Home() {
             keyboard.length > 0 &&
             keyboard.map(item => (
               <Button
-                key={item.text}
+                key={item.value}
                 item={item}
-                onPress={() => setCurrentValue(item.text)}
+                onPress={() => calculate(item.type, item.value)}
               />
             ))}
-          <LargeButton />
+          <LargeButton
+            item={{
+              theme: colors.buttondark,
+              value: '0',
+              type: 'number',
+            }}
+            onPress={() => calculate('number', '0')}
+          />
           <Button
             item={{
               theme: colors.buttondark,
-              text: '.',
-              desc: 'number',
+              value: '.',
+              type: 'number',
             }}
+            onPress={() => calculate('number', '.')}
           />
           <Button
             item={{
               theme: colors.buttonorange,
-              text: '=',
-              desc: 'equal',
+              value: '=',
+              type: 'equal',
             }}
+            onPress={() => calculate('equal')}
           />
         </View>
       </View>
@@ -198,7 +207,16 @@ function NumberField() {
   );
 }
 
-function LargeButton() {
+interface ButtonProps {
+  item?: {
+    theme: string;
+    value: string;
+    type: string;
+  };
+  onPress?: () => void;
+}
+
+function LargeButton({item, onPress}: ButtonProps) {
   const {width} = useWindowDimensions();
   const buttonSize = width / 2.3;
   return (
@@ -212,16 +230,17 @@ function LargeButton() {
         margin: 4,
       }}>
       <Pressable
+        onPress={onPress}
         style={{
           borderRadius: 18,
-          backgroundColor: colors.buttondark,
+          backgroundColor: item?.theme,
           alignItems: 'center',
           justifyContent: 'center',
           height: 80,
           width: buttonSize,
           margin: 4,
         }}>
-        <Text style={{color: 'white', fontSize: 24}}>0</Text>
+        <Text style={{color: 'white', fontSize: 24}}>{item?.value}</Text>
       </Pressable>
       <View
         style={{
@@ -238,15 +257,6 @@ function LargeButton() {
       />
     </View>
   );
-}
-
-interface ButtonProps {
-  item?: {
-    theme: string;
-    text: string;
-    desc: string;
-  };
-  onPress?: () => void;
 }
 
 function Button({item, onPress}: ButtonProps) {
@@ -273,7 +283,7 @@ function Button({item, onPress}: ButtonProps) {
           width: buttonSize,
           margin: 4,
         }}>
-        <Text style={{color: 'white', fontSize: 24}}>{item?.text}</Text>
+        <Text style={{color: 'white', fontSize: 24}}>{item?.value}</Text>
       </Pressable>
       <View
         style={{
