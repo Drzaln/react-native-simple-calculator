@@ -157,7 +157,7 @@ function Home() {
           <Button
             item={{
               theme: colors.buttonorange,
-              value: '=',
+              value: '= asd',
               type: 'equal',
             }}
             onPress={() => calculate('equal')}
